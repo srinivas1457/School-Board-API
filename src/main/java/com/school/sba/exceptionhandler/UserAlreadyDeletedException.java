@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SchoolNotFoundByNameException extends RuntimeException {
+public class UserAlreadyDeletedException extends RuntimeException{
 	private String message;
 }

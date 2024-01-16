@@ -12,60 +12,59 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.school.sba.util.ErrorStructure;
-
+@RestControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
-	
+
+	// Utility method to create a standardized response structure
+	private ResponseEntity<Object> structure(HttpStatus status, String message, Object rootCause) {
+		return new ResponseEntity<Object>(Map.of("Status", status.value(), "message", message, "rootCause", rootCause),
+				status);
+	}
+
+	// Extract field errors and their corresponding error messages
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		List<ObjectError> allErrors = ex.getAllErrors(); // UPCASTING : ObjectError is the SuperClass of
-															// FieldError
-		// which extends Error Class.
+		List<ObjectError> allErrors = ex.getAllErrors();
+		Map<String, String> errors = new HashMap<>();
 
-		Map<String, String> mapErrors = new HashMap<String, String>();
+		// Extract field errors and their corresponding error messages
+		allErrors.forEach(error -> {
+			FieldError fieldError = (FieldError) error;
+			errors.put(fieldError.getField(), error.getDefaultMessage());
+		});
+		return structure(HttpStatus.BAD_REQUEST, "Failed To Save The Data", errors);
+	}
 
-		for (ObjectError error : allErrors) {
-			FieldError fieldError = (FieldError) error; // DOWNCASTING : ObjectError -> FieldError
-			String message = fieldError.getDefaultMessage(); /** VALUE **/
-			String field = fieldError.getField(); /** KEY **/
+	// Custom handling for DataNotPresentException
+	@ExceptionHandler(DataNotPresentException.class)
+	public ResponseEntity<Object> handllerDataNotPresent(DataNotPresentException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Data Not Present");
+	}
 
-			mapErrors.put(field, message);
-		}
-		return new ResponseEntity<Object>(mapErrors, HttpStatus.BAD_REQUEST);
+	// Custom handling for UserNotFoundByIdException
+	@ExceptionHandler(UserNotFoundByIdException.class)
+	public ResponseEntity<Object> handllerUserNotFoundById(UserNotFoundByIdException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "User With Given Id Not Present");
 	}
 
 	@ExceptionHandler(SchoolNotFoundByIdException.class)
-	public ResponseEntity<ErrorStructure<String>> SchoolNotFoundById(SchoolNotFoundByIdException exp) {
-		ErrorStructure<String> es = new ErrorStructure<String>();
-		es.setStatusCode(HttpStatus.NOT_FOUND.value());
-		es.setMessage(exp.getMessage()); // message what we throw in service
-		es.setErrordata(" School NOT PRESENT With Given Id");
-
-		return new ResponseEntity<ErrorStructure<String>>(es, HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handllerSchoolNotFoundById(SchoolNotFoundByIdException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), " School NOT PRESENT With Given Id");
 	}
-	
+
 	@ExceptionHandler(SchoolNotFoundByNameException.class)
-	public ResponseEntity<ErrorStructure<String>> SchoolNotFoundByName(SchoolNotFoundByNameException exp) {
-		ErrorStructure<String> es = new ErrorStructure<String>();
-		es.setStatusCode(HttpStatus.NOT_FOUND.value());
-		es.setMessage(exp.getMessage()); // message what we throw in service
-		es.setErrordata(" School NOT PRESENT With Given Name");
-
-		return new ResponseEntity<ErrorStructure<String>>(es, HttpStatus.NOT_FOUND);
+	public ResponseEntity<Object> handllerSchoolNotFoundByName(SchoolNotFoundByNameException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), " School NOT PRESENT With Given Name");
 	}
-	
-	@ExceptionHandler(DataNotPresentException.class)
-	public ResponseEntity<ErrorStructure<String>> DataNotPresent(DataNotPresentException exp) {
-		ErrorStructure<String> es = new ErrorStructure<String>();
-		es.setStatusCode(HttpStatus.NOT_FOUND.value());
-		es.setMessage(exp.getMessage()); // message what we throw in service
-		es.setErrordata(" Data NOT PRESENT");
 
-		return new ResponseEntity<ErrorStructure<String>>(es, HttpStatus.NOT_FOUND);
+	@ExceptionHandler(UserAlreadyDeletedException.class)
+	public ResponseEntity<Object> handlerUserAlreadyDeleted(UserAlreadyDeletedException ex) {
+		return structure(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), "User With Given Id is already Deleted");
 	}
 
 }

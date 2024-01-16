@@ -80,7 +80,7 @@ public  class SchoolServiceImpl implements SchoolService {
 
 	@Override
 	public ResponseEntity<ResponseStructure<List<SchoolResponse>>> findBySchoolName(String schoolName) {
-		List<School> schools=schoolRepo.findBYSchoolName(schoolName);
+		List<School> schools=schoolRepo.findBySchoolName(schoolName);
 		if (!schools.isEmpty()) {
 			List<SchoolResponse>schoolResponses=new LinkedList<>();
 			for (School school : schools) {
