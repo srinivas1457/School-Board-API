@@ -1,26 +1,18 @@
-package com.school.sba.entity;
+package com.school.sba.requestdto;
 
 import java.time.Duration;
 import java.time.LocalTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Schedule {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int scheduleId;
+public class ScheduleRequest {
 	private LocalTime opensAt;
 	private LocalTime closesAt;
 	private int classHoursPerday;
@@ -29,5 +21,4 @@ public class Schedule {
 	private Duration breakeLength;
 	private LocalTime lunchTime;
 	private Duration lunchBreakLength;
-
 }

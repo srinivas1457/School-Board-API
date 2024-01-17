@@ -66,5 +66,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<Object> handlerUserAlreadyDeleted(UserAlreadyDeletedException ex) {
 		return structure(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), "User With Given Id is already Deleted");
 	}
+	
+	@ExceptionHandler(UnauthorizedAccessException.class)
+	public ResponseEntity<Object> handlerUnauthorizedAccess(UnauthorizedAccessException ex) {
+		return structure(HttpStatus.UNAUTHORIZED, ex.getMessage(), "Unauthorized User");
+	}
 
 }

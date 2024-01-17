@@ -7,9 +7,12 @@ import com.school.sba.requestdto.UserRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,8 +38,13 @@ public class User {
 	private long contactNo;
 	@Column(unique = true)
 	private String email;
+	@Enumerated(EnumType.STRING) //this annatation 
 	private UserRole userRole;
 	private LocalDate dateOfBirth;
+	
 	private boolean isDeleted;
+	
+	@ManyToOne
+	private School school;
 
 }

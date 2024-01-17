@@ -53,8 +53,8 @@ public class UserRequest {
 	@Pattern(regexp = "^(ADMIN|TEACHER|STUDENT)$",message = "Plese mention ADMIN or STUDENT or TEACHER")
 	private String userRole;
 	
-	@NotBlank(message = "Date of birth is required")
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Invalid date of birth format. Use yyyy-MM-dd")
+//	@NotBlank(message = "Date of birth is required")
+//    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Invalid date of birth format. Use yyyy-MM-dd")
     @Past(message = "Date of birth must be in the past")
 	private LocalDate dateOfBirth;
 }
