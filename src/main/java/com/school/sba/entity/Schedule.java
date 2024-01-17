@@ -24,10 +24,10 @@ public class Schedule {
 	private LocalTime opensAt;
 	private LocalTime closesAt;
 	private int classHoursPerday;
-	private Duration classHoursLength;
+	private Duration classHoursLengthInMinutes;
 	private LocalTime breaktime;
-	private Duration breakeLength;
+	private Duration breakeLengthInMinutes;
 	private LocalTime lunchTime;
-	private Duration lunchBreakLength;
+	private Duration lunchBreakLengthInMinutes;
 
 }

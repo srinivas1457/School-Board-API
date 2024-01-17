@@ -1,6 +1,5 @@
 package com.school.sba.requestdto;
 
-import java.time.Duration;
 import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
@@ -16,9 +15,9 @@ public class ScheduleRequest {
 	private LocalTime opensAt;
 	private LocalTime closesAt;
 	private int classHoursPerday;
-	private Duration classHoursLength;
+	private int classHoursLengthInMinutes;
 	private LocalTime breaktime;
-	private Duration breakeLength;
+	private int breakeLengthInMinutes;
 	private LocalTime lunchTime;
-	private Duration lunchBreakLength;
+	private int lunchBreakLengthInMinutes;
 }

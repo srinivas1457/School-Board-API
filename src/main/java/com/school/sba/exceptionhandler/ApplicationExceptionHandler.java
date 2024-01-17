@@ -66,10 +66,24 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<Object> handlerUserAlreadyDeleted(UserAlreadyDeletedException ex) {
 		return structure(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), "User With Given Id is already Deleted");
 	}
-	
+
 	@ExceptionHandler(UnauthorizedAccessException.class)
 	public ResponseEntity<Object> handlerUnauthorizedAccess(UnauthorizedAccessException ex) {
 		return structure(HttpStatus.UNAUTHORIZED, ex.getMessage(), "Unauthorized User");
 	}
 
+	@ExceptionHandler(ScheduleNotFoundByIdException.class)
+	public ResponseEntity<Object> handlerScheduleNotFoundById(ScheduleNotFoundByIdException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Schedule Not Present With Given Id");
+	}
+
+	@ExceptionHandler(IllegalRequestException.class)
+	public ResponseEntity<Object> handlerIllegalRequest(IllegalRequestException ex) {
+		return structure(HttpStatus.BAD_REQUEST, ex.getMessage(), "Illegal Request");
+	}
+
+	@ExceptionHandler(DataAlreadyExistException.class)
+	public ResponseEntity<Object> handlerDataAlreadyExist(DataAlreadyExistException ex) {
+		return structure(HttpStatus.NOT_ACCEPTABLE, ex.getMessage(), "Data Already Exist");
+	}
 }
