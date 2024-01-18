@@ -38,7 +38,7 @@ public class User {
 	private long contactNo;
 	@Column(unique = true)
 	private String email;
-	@Enumerated(EnumType.STRING) //this annatation 
+	@Enumerated(EnumType.STRING) 
 	private UserRole userRole;
 	private LocalDate dateOfBirth;
 	

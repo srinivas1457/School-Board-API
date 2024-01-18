@@ -8,6 +8,6 @@ import com.school.sba.entity.Schedule;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer>{
 	
-	Optional<Schedule> findScheduleBySchool(int schoolId);
+	
 
 }
