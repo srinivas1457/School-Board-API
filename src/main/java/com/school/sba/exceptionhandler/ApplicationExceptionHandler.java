@@ -86,4 +86,9 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<Object> handlerDataAlreadyExist(DataAlreadyExistException ex) {
 		return structure(HttpStatus.NOT_ACCEPTABLE, ex.getMessage(), "Data Already Exist");
 	}
+	
+	@ExceptionHandler(AcademicProgramNotFoundByIdException.class)
+	public ResponseEntity<Object> handlerAcademicProgramNotFoundById(AcademicProgramNotFoundByIdException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Academic Program Data Not present");
+	}
 }

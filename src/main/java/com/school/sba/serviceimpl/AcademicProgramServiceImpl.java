@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.school.sba.entity.AcademicProgram;
+import com.school.sba.entity.Subject;
 import com.school.sba.exceptionhandler.DataNotPresentException;
 import com.school.sba.exceptionhandler.SchoolNotFoundByIdException;
 import com.school.sba.repository.AcademicProgramRepo;
@@ -29,10 +30,17 @@ public class AcademicProgramServiceImpl implements AcademicProgramService {
 	@Autowired
 	private ResponseStructure<AcademicProgramResponse> responseStructure;
 
-	private AcademicProgramResponse mapToAcademicProgramResponse(AcademicProgram academicProgram) {
+	public AcademicProgramResponse mapToAcademicProgramResponse(AcademicProgram academicProgram) {
+		List<String> subjects = new ArrayList<>();
+
+		if (academicProgram.getSubjects() != null) {
+			academicProgram.getSubjects().forEach(subject -> {
+				subjects.add(subject.getSubjectName());
+			});
+		}
 		return AcademicProgramResponse.builder().academicProgramId(academicProgram.getAcademicProgramId())
 				.programType(academicProgram.getProgramType()).programName(academicProgram.getProgramName())
-				.beginsAt(academicProgram.getBeginsAt()).endsAt(academicProgram.getEndsAt()).build();
+				.beginsAt(academicProgram.getBeginsAt()).endsAt(academicProgram.getEndsAt()).subjects(subjects).build();
 	}
 
 	private AcademicProgram mapToAcademicProgram(AcademicProgramRequest academicProgramRequest) {
@@ -68,12 +76,11 @@ public class AcademicProgramServiceImpl implements AcademicProgramService {
 
 			if (!acadamicProgramList.isEmpty()) {
 				List<AcademicProgramResponse> academicProgramResponseList = new ArrayList<>();
-				for (AcademicProgram academicProgram : acadamicProgramList)
-				{
+				for (AcademicProgram academicProgram : acadamicProgramList) {
 					AcademicProgramResponse academicProgramResponse = mapToAcademicProgramResponse(academicProgram);
 					academicProgramResponseList.add(academicProgramResponse);
 				}
-				
+
 				ResponseStructure<List<AcademicProgramResponse>> responseStructure = new ResponseStructure<>();
 				responseStructure.setStatusCode(HttpStatus.FOUND.value());
 				responseStructure.setMessage("AcademicProgram Data Found Successfully");

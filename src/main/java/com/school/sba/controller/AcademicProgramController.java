@@ -21,11 +21,11 @@ public class AcademicProgramController {
 	@Autowired
 	private AcademicProgramService academicProgramService;
 	
-	@PostMapping(" /schools/{schoolId}/academic-programs")
+	@PostMapping("/schools/{schoolId}/academic-programs")
 	public ResponseEntity<ResponseStructure<AcademicProgramResponse>> insertAcademicProgram(@PathVariable int schoolId,@RequestBody AcademicProgramRequest academicProgramRequest){
 		return academicProgramService.insertAcademicProgram(schoolId,academicProgramRequest);
 	}
-	@GetMapping(" /schools/{schoolId}/academic-programs")
+	@GetMapping("/schools/{schoolId}/academic-programs")
 	public ResponseEntity<ResponseStructure<List<AcademicProgramResponse>>> findAcademicProgramsBySchoolId(@PathVariable int schoolId){
 		return academicProgramService.findAcademicProgramsBySchoolId(schoolId);
 	}
