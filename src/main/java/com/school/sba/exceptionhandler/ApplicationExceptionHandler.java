@@ -91,4 +91,14 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<Object> handlerAcademicProgramNotFoundById(AcademicProgramNotFoundByIdException ex) {
 		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Academic Program Data Not present");
 	}
+	
+	@ExceptionHandler(SubjectNotFoundByIdException.class)
+	public ResponseEntity<Object> handlerSubjectNotFoundById(SubjectNotFoundByIdException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Subject Not Present With Given Id");
+	}
+	
+	@ExceptionHandler(AdminCannotBeAssignedToAcademicProgramException.class)
+	public ResponseEntity<Object> handlerAdminCannotBeAssignedToAcademicProgram(AdminCannotBeAssignedToAcademicProgramException ex) {
+		return structure(HttpStatus.NOT_ACCEPTABLE, ex.getMessage(), "Admin Cannot Be Assigned To AcademicProgram");
+	}
 }

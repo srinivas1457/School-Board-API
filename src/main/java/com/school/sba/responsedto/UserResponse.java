@@ -2,6 +2,7 @@ package com.school.sba.responsedto;
 
 import java.time.LocalDate;
 
+import com.school.sba.entity.Subject;
 import com.school.sba.enums.UserRole;
 
 import lombok.AllArgsConstructor;
@@ -25,5 +26,5 @@ public class UserResponse {
 	private UserRole userRole;
 	private LocalDate dateOfBirth;
 	private boolean isDeleted;
-
+	private Subject subject;
 }

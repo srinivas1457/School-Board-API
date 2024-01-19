@@ -2,6 +2,7 @@ package com.school.sba.entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import com.school.sba.enums.ProgramType;
 
@@ -38,4 +39,7 @@ public class AcademicProgram {
 	
 	@ManyToMany
 	private List<Subject> subjects;
+	
+	@ManyToMany
+	private Set<User>users;
 }
