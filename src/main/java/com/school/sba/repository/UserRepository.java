@@ -1,5 +1,7 @@
 package com.school.sba.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.school.sba.entity.User;
@@ -10,5 +12,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	User findByUserRole(UserRole userRole);
 
 	boolean existsByUserRole(UserRole userRole);
+
+	Optional<User> findByUserName(String userName);
 
 }

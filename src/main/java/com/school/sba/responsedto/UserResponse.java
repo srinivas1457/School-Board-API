@@ -26,5 +26,5 @@ public class UserResponse {
 	private UserRole userRole;
 	private LocalDate dateOfBirth;
 	private boolean isDeleted;
-	private Subject subject;
+//	private Subject subject;
 }

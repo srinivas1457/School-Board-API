@@ -51,6 +51,13 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<Object> handllerUserNotFoundById(UserNotFoundByIdException ex) {
 		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "User With Given Id Not Present");
 	}
+	
+	// Custom handling for UserNotFoundByIdException
+		@ExceptionHandler(UserNotFoundByUserNameException.class)
+		public ResponseEntity<Object> handllerUserNotFoundByUserName(UserNotFoundByUserNameException ex) {
+			return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "User With Given User Name Not Present");
+		}
+
 
 	@ExceptionHandler(SchoolNotFoundByIdException.class)
 	public ResponseEntity<Object> handllerSchoolNotFoundById(SchoolNotFoundByIdException ex) {

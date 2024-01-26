@@ -1,23 +1,16 @@
 package com.school.sba.serviceimpl;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.school.sba.entity.School;
-import com.school.sba.entity.User;
 import com.school.sba.enums.UserRole;
-import com.school.sba.exceptionhandler.DataNotPresentException;
 import com.school.sba.exceptionhandler.IllegalRequestException;
-import com.school.sba.exceptionhandler.SchoolNotFoundByIdException;
-import com.school.sba.exceptionhandler.SchoolNotFoundByNameException;
 import com.school.sba.exceptionhandler.UnauthorizedAccessException;
-import com.school.sba.exceptionhandler.UserNotFoundByIdException;
+import com.school.sba.exceptionhandler.UserNotFoundByUserNameException;
 import com.school.sba.repository.SchoolRepository;
 import com.school.sba.repository.UserRepository;
 import com.school.sba.requestdto.SchoolRequest;
@@ -49,7 +42,7 @@ public class SchoolServiceImpl implements SchoolService {
 
 
 	@Override
-	public ResponseEntity<ResponseStructure<SchoolResponse>> addSchool(SchoolRequest schoolRequest, int userId) {
+	public ResponseEntity<ResponseStructure<SchoolResponse>> addSchool(SchoolRequest schoolRequest) {
 		/* 1st Approach */
 //		User user = userRepo.findById(userId)
 //				.orElseThrow(() -> new UserNotFoundByIdException("User With Given Id Not Present"));
@@ -69,8 +62,8 @@ public class SchoolServiceImpl implements SchoolService {
 //		}
 
 		/* 2nd Approach */
-
-		return userRepo.findById(userId).map(user -> {
+		 String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		return userRepo.findByUserName(userName).map(user -> {
 			if (user.getUserRole().equals(UserRole.ADMIN)) {
 				if (user.getSchool() == null) {
 					School school = mapToSchool(schoolRequest);
@@ -89,7 +82,7 @@ public class SchoolServiceImpl implements SchoolService {
 			} else
 				throw new UnauthorizedAccessException("Failed To Create School");
 
-		}).orElseThrow(() -> new UserNotFoundByIdException("User With Given Id Not Present"));
+		}).orElseThrow(() -> new UserNotFoundByUserNameException("Present User Details Not Matching With ADMIN"));
 	}
 
 }

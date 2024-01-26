@@ -2,6 +2,7 @@ package com.school.sba.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,21 +27,30 @@ public class UserController {
 	public ResponseEntity<ResponseStructure<UserResponse>> userRegistration(@RequestBody @Valid UserRequest userRequest){
 		return userService.userRegistration(userRequest);
 	}
+	
+	@PostMapping("/users")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<ResponseStructure<UserResponse>> addOtherUser(@RequestBody @Valid UserRequest userRequest){
+		return userService.addOtherUser (userRequest);
+	}
 	@GetMapping("users/{userId}")
 	public ResponseEntity<ResponseStructure<UserResponse>> findUserById(@PathVariable int userId){
 		return userService.findUserById(userId);
 	}
 	@DeleteMapping("users/{userId}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ResponseStructure<UserResponse>> deleteUserById(@PathVariable int userId){
 		return userService.deleteUserById(userId);
 	}
 	
 	@PutMapping("/academic-programs/{academicProgramId}/users/{userId}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ResponseStructure<UserResponse>> setUserToAcademicProgram(@PathVariable int academicProgramId,@PathVariable int userId){
 		return userService.setUserToAcademicProgram(academicProgramId,userId);
 	}
 	
 	@PutMapping("/subjects/{subjectId}/users/{userId}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ResponseStructure<UserResponse>> setSubjectToTeacher(@PathVariable int subjectId,@PathVariable int userId){
 		return userService.setSubjectToTeacher(subjectId,userId);
 	}
