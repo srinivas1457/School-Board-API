@@ -1,7 +1,5 @@
 package com.school.sba.requestdto;
 
-import java.time.LocalDateTime;
-
 import com.school.sba.enums.ClassStatus;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +14,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ClassHourRequest {
+	private int classHourId;
 	private int roomNo;
 	private ClassStatus classStatus;
+	private int userId;
+	private int subjectId;
+
 
 }

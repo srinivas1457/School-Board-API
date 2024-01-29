@@ -22,4 +22,6 @@ public class ClassHourResponse {
 	private LocalDateTime endsAt;
 	private int roomNo;
 	private ClassStatus classStatus;
+	private String subjectName;
+	private String teacherName;
 }

@@ -155,6 +155,7 @@ public class UserServiceImpl implements UserService {
 
 			return new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure, HttpStatus.OK);
 		}).orElseThrow(() -> new UserNotFoundByIdException("Failed to SET user to THIS PROGRAM"));
+
 	}
 
 	@Override
@@ -165,13 +166,20 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new SubjectNotFoundByIdException("Subject With Given Id Not Found"));
 
 		if (user.getUserRole() == UserRole.TEACHER) {
-			user.setSubject(subject);
-			user = userRepo.save(user);
-			UserResponse userResponse = mapToUserResponse(user);
-			responseStructure.setStatusCode(HttpStatus.OK.value());
-			responseStructure.setMessage("Subject Set To Teacher Successfully");
-			responseStructure.setData(userResponse);
-			return new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure, HttpStatus.OK);
+
+			if (user.getSubject() == null) {
+				user.setSubject(subject);
+				user = userRepo.save(user);
+				UserResponse userResponse = mapToUserResponse(user);
+				responseStructure.setStatusCode(HttpStatus.OK.value());
+				responseStructure.setMessage("Subject Set To Teacher Successfully");
+				responseStructure.setData(userResponse);
+				return new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure, HttpStatus.OK);
+			} else {
+				throw new IllegalRequestException(
+						"TEACHER already engaged with the " + user.getSubject().getSubjectName() + " Subject");
+			}
+
 		} else
 			throw new IllegalRequestException("User role is not matching to teacher");
 	}

@@ -51,13 +51,12 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<Object> handllerUserNotFoundById(UserNotFoundByIdException ex) {
 		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "User With Given Id Not Present");
 	}
-	
-	// Custom handling for UserNotFoundByIdException
-		@ExceptionHandler(UserNotFoundByUserNameException.class)
-		public ResponseEntity<Object> handllerUserNotFoundByUserName(UserNotFoundByUserNameException ex) {
-			return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "User With Given User Name Not Present");
-		}
 
+	// Custom handling for UserNotFoundByIdException
+	@ExceptionHandler(UserNotFoundByUserNameException.class)
+	public ResponseEntity<Object> handllerUserNotFoundByUserName(UserNotFoundByUserNameException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "User With Given User Name Not Present");
+	}
 
 	@ExceptionHandler(SchoolNotFoundByIdException.class)
 	public ResponseEntity<Object> handllerSchoolNotFoundById(SchoolNotFoundByIdException ex) {
@@ -93,19 +92,25 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<Object> handlerDataAlreadyExist(DataAlreadyExistException ex) {
 		return structure(HttpStatus.NOT_ACCEPTABLE, ex.getMessage(), "Data Already Exist");
 	}
-	
+
 	@ExceptionHandler(AcademicProgramNotFoundByIdException.class)
 	public ResponseEntity<Object> handlerAcademicProgramNotFoundById(AcademicProgramNotFoundByIdException ex) {
 		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Academic Program Data Not present");
 	}
-	
+
 	@ExceptionHandler(SubjectNotFoundByIdException.class)
 	public ResponseEntity<Object> handlerSubjectNotFoundById(SubjectNotFoundByIdException ex) {
 		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Subject Not Present With Given Id");
 	}
-	
+
 	@ExceptionHandler(AdminCannotBeAssignedToAcademicProgramException.class)
-	public ResponseEntity<Object> handlerAdminCannotBeAssignedToAcademicProgram(AdminCannotBeAssignedToAcademicProgramException ex) {
+	public ResponseEntity<Object> handlerAdminCannotBeAssignedToAcademicProgram(
+			AdminCannotBeAssignedToAcademicProgramException ex) {
 		return structure(HttpStatus.NOT_ACCEPTABLE, ex.getMessage(), "Admin Cannot Be Assigned To AcademicProgram");
+	}
+
+	@ExceptionHandler(ClassHourNotFoundByIdException.class)
+	public ResponseEntity<Object> ClassHourNotFoundById(ClassHourNotFoundByIdException ex) {
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Academic Program Data Not present");
 	}
 }
