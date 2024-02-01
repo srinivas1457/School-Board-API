@@ -68,9 +68,9 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), " School NOT PRESENT With Given Name");
 	}
 
-	@ExceptionHandler(UserAlreadyDeletedException.class)
-	public ResponseEntity<Object> handlerUserAlreadyDeleted(UserAlreadyDeletedException ex) {
-		return structure(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), "User With Given Id is already Deleted");
+	@ExceptionHandler(DataAlreadyDeletedException.class)
+	public ResponseEntity<Object> handlerDataAlreadyDeleted(DataAlreadyDeletedException ex) {
+		return structure(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), "Data already Deleted");
 	}
 
 	@ExceptionHandler(UnauthorizedAccessException.class)

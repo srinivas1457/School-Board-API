@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.school.sba.entity.AcademicProgram;
 import com.school.sba.entity.Schedule;
+import com.school.sba.exceptionhandler.AcademicProgramNotFoundByIdException;
+import com.school.sba.exceptionhandler.DataAlreadyDeletedException;
 import com.school.sba.exceptionhandler.DataAlreadyExistException;
 import com.school.sba.exceptionhandler.ScheduleNotFoundByIdException;
 import com.school.sba.exceptionhandler.SchoolNotFoundByIdException;
@@ -102,5 +105,20 @@ public class ScheduleServiceImpl implements ScheduleService {
 		}).orElseThrow(() -> new ScheduleNotFoundByIdException("Schedule data Not Found By Id"));
 
 	}
+	
+	ResponseEntity<ResponseStructure<String>> deleteById(int scheduleId){
+		return  scheduleRepo.findById(scheduleId).map(schedulem ->{
+			scheduleRepo.deleteById(scheduleId);
+			ResponseStructure<String> responseStructure=new ResponseStructure<>();
+			responseStructure.setStatusCode(HttpStatus.OK.value());
+			responseStructure.setMessage("Schedule Deleted Successfully");
+			responseStructure.setData("Schedule With given Id : "+scheduleId+" is Successfully Deleted");
+
+			return new ResponseEntity<ResponseStructure<String>>(responseStructure, HttpStatus.OK);
+		})
+				.orElseThrow(() -> new ScheduleNotFoundByIdException("Schedule With Given Id Not Found"));
+		
+	}
+
 
 }

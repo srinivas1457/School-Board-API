@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserAlreadyDeletedException extends RuntimeException{
+public class DataAlreadyDeletedException extends RuntimeException{
 	private String message;
 }

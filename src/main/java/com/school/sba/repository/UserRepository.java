@@ -1,5 +1,6 @@
 package com.school.sba.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,10 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	boolean existsByUserRole(UserRole userRole);
 
 	Optional<User> findByUserName(String userName);
+	
+	List<User> findByUserRoleAndAcademicPrograms_AcademicProgramId(UserRole userRole,int academicProgramId);
 
+	List<User> findByIsDeletedTrue();
+	
+	List<User> findByUserRoleNot(UserRole userRole);
 }

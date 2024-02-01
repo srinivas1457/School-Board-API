@@ -10,4 +10,6 @@ public interface SchoolRepository extends JpaRepository<School, Integer>{
 
 	public List<School> findBySchoolName(String schoolName);
 
+	public List<School> findByIsDeletedTrue();
+
 }

@@ -9,6 +9,7 @@ import com.school.sba.enums.ProgramType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +35,7 @@ public class AcademicProgram {
 	private String programName;
 	private LocalDate beginsAt;
 	private LocalDate endsAt;
+	private boolean isDeleted;
 	
 	@ManyToOne
 	private  School school;
@@ -44,6 +46,6 @@ public class AcademicProgram {
 	@ManyToMany
 	private Set<User>users;
 	
-	@OneToMany(mappedBy = "academicProgram")
+	@OneToMany(mappedBy = "academicProgram",fetch = FetchType.EAGER)
 	private List<ClassHour> classHours;
 }

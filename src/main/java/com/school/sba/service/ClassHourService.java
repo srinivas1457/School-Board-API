@@ -17,4 +17,8 @@ public interface ClassHourService {
 
 	public ResponseEntity<ResponseStructure2<List<ClassHourResponse>, List<ErrorResponse>>> updateClassHour(List<ClassHourRequest> classHourRequestList);
 
+	public ResponseEntity<ResponseStructure<String>> generateNextWeekClassHours(int academicProgramId);
+	
+//	public void generateNextWeekClassHours(int academicProgramId);
+
 }

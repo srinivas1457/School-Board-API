@@ -1,5 +1,7 @@
 package com.school.sba.serviceimpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,17 +10,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.school.sba.entity.AcademicProgram;
+import com.school.sba.entity.ClassHour;
 import com.school.sba.entity.Subject;
 import com.school.sba.entity.User;
 import com.school.sba.enums.UserRole;
 import com.school.sba.exceptionhandler.AcademicProgramNotFoundByIdException;
+import com.school.sba.exceptionhandler.DataAlreadyDeletedException;
+import com.school.sba.exceptionhandler.DataNotPresentException;
 import com.school.sba.exceptionhandler.IllegalRequestException;
 import com.school.sba.exceptionhandler.SchoolNotFoundByIdException;
 import com.school.sba.exceptionhandler.SubjectNotFoundByIdException;
 import com.school.sba.exceptionhandler.UnauthorizedAccessException;
-import com.school.sba.exceptionhandler.UserAlreadyDeletedException;
 import com.school.sba.exceptionhandler.UserNotFoundByIdException;
 import com.school.sba.repository.AcademicProgramRepo;
+import com.school.sba.repository.ClassHourRepository;
 import com.school.sba.repository.SchoolRepository;
 import com.school.sba.repository.SubjectRepo;
 import com.school.sba.repository.UserRepository;
@@ -40,6 +45,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private SubjectRepo subjectRepo;
+
+	@Autowired
+	private ClassHourRepository classHourRepo;
 
 	@Autowired
 	private ResponseStructure<UserResponse> responseStructure;
@@ -73,13 +81,17 @@ public class UserServiceImpl implements UserService {
 			return new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure, HttpStatus.BAD_REQUEST);
 		}
 
-		UserResponse userResponse = mapToUserResponse(userRepo.save(user));
+		if (user.getUserRole() == UserRole.ADMIN) {
+			UserResponse userResponse = mapToUserResponse(userRepo.save(user));
 
-		responseStructure.setStatusCode(HttpStatus.CREATED.value());
-		responseStructure.setMessage("User Data Successfully Created");
-		responseStructure.setData(userResponse);
+			responseStructure.setStatusCode(HttpStatus.CREATED.value());
+			responseStructure.setMessage("User Data Successfully Created");
+			responseStructure.setData(userResponse);
 
-		return new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure, HttpStatus.CREATED);
+			return new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure, HttpStatus.CREATED);
+		} else {
+			throw new IllegalRequestException("User Role Not Matching With Admin");
+		}
 	}
 
 	@Override
@@ -98,28 +110,26 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponse>> deleteUserById(int userId) {
+	public ResponseEntity<ResponseStructure<String>> deleteUserById(int userId) {
 		User user = userRepo.findById(userId)
 				.orElseThrow(() -> new UserNotFoundByIdException("User With Given Id Not Found"));
 		if (!user.isDeleted()) {
 			if (user.isDeleted() == false)
 				user.setDeleted(true);
-			User user2 = userRepo.save(user);
-			UserResponse userResponse = mapToUserResponse(user2);
-
+			userRepo.save(user);
+			ResponseStructure<String> responseStructure = new ResponseStructure<>();
 			responseStructure.setStatusCode(HttpStatus.OK.value());
 			responseStructure.setMessage("User Deleted Successfully");
-			responseStructure.setData(userResponse);
+			responseStructure.setData("User With given Id : " + userId + " is Successfully Deleted");
 
-			return new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure, HttpStatus.OK);
+			return new ResponseEntity<ResponseStructure<String>>(responseStructure, HttpStatus.OK);
 		} else {
-			throw new UserAlreadyDeletedException("User Data Already Deleted ");
+			throw new DataAlreadyDeletedException("User Data Already Deleted ");
 		}
 	}
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> setUserToAcademicProgram(int academicProgramId, int userId) {
-
 		return userRepo.findById(userId).map(user -> {
 			AcademicProgram pro = null;
 			if (user.getUserRole().equals(UserRole.ADMIN))
@@ -206,6 +216,66 @@ public class UserServiceImpl implements UserService {
 
 		}).orElseThrow(() -> new UnauthorizedAccessException("Please Login As A ADMIN"));
 
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<List<UserResponse>>> findUsersByRoleByAcademicProgram(int academicProgramId,
+			UserRole userRole) {
+		if (UserRole.ADMIN.equals(userRole)) {
+			throw new IllegalRequestException(" No Access To Fetch Admin Details");
+		}
+		return academicProgramRepo.findById(academicProgramId).map(academicProgram -> {
+
+			//////// *** 1 st approach***high time complexity *** it will fetch all users
+			//////// data present in academic program list/////
+//			List<User> users = academicProgram.getUsers().stream()
+//					.filter(user -> user.getUserRole().equals(userRole))
+//					.toList();
+
+			///////// *** 2nd Approach *** low Time Complexity ** it will fetch only teacher
+			///////// list//////////////
+
+			List<User> users = userRepo.findByUserRoleAndAcademicPrograms_AcademicProgramId(userRole,
+					academicProgramId);
+
+			if (users.isEmpty()) {
+				throw new DataNotPresentException("No Users found with User Role: " + userRole);
+			}
+
+			List<UserResponse> userResponses = users.stream().map(this::mapToUserResponse) // Use method reference
+					.toList();
+
+			ResponseStructure<List<UserResponse>> responseStructure = new ResponseStructure<>();
+			responseStructure.setStatusCode(HttpStatus.OK.value());
+			responseStructure.setMessage("Users found with User Role: " + userRole);
+			responseStructure.setData(userResponses);
+
+			return new ResponseEntity<>(responseStructure, HttpStatus.OK);
+		}).orElseThrow(() -> new AcademicProgramNotFoundByIdException("Academic Program Data Not Found With given Id"));
+	}
+
+	public void deleteUsersPerminently() {
+		List<User> usersToDelete = userRepo.findByIsDeletedTrue();
+
+		for (User user : usersToDelete) {
+			// Remove the user from associated academic programs
+			if (user.getAcademicPrograms() != null) {
+				for (AcademicProgram academicProgram : user.getAcademicPrograms()) {
+					academicProgram.getUsers().remove(user);
+				}
+				academicProgramRepo.saveAll(user.getAcademicPrograms());
+			}
+
+			// Break the relationship between user and class hours
+			List<ClassHour> classHours = classHourRepo.findByUser(user);
+			for (ClassHour classHour : classHours) {
+				classHour.setUser(null);
+			}
+			classHourRepo.saveAll(classHours);
+		}
+
+		// Delete users
+		userRepo.deleteInBatch(usersToDelete);
 	}
 
 }

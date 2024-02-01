@@ -9,10 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.school.sba.entity.AcademicProgram;
-import com.school.sba.entity.Subject;
+import com.school.sba.entity.ClassHour;
+import com.school.sba.exceptionhandler.AcademicProgramNotFoundByIdException;
+import com.school.sba.exceptionhandler.DataAlreadyDeletedException;
 import com.school.sba.exceptionhandler.DataNotPresentException;
 import com.school.sba.exceptionhandler.SchoolNotFoundByIdException;
 import com.school.sba.repository.AcademicProgramRepo;
+import com.school.sba.repository.ClassHourRepository;
 import com.school.sba.repository.SchoolRepository;
 import com.school.sba.requestdto.AcademicProgramRequest;
 import com.school.sba.responsedto.AcademicProgramResponse;
@@ -27,6 +30,11 @@ public class AcademicProgramServiceImpl implements AcademicProgramService {
 
 	@Autowired
 	private SchoolRepository schoolRepo;
+	
+	@Autowired
+	private ClassHourRepository classHourRepo;
+
+	
 	@Autowired
 	private ResponseStructure<AcademicProgramResponse> responseStructure;
 
@@ -94,6 +102,35 @@ public class AcademicProgramServiceImpl implements AcademicProgramService {
 			}
 		}).orElseThrow(() -> new SchoolNotFoundByIdException("School not found by given Id"));
 
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> deleteAcademicProgramById(int academicProgramId) {
+		AcademicProgram academicProgram = academicProgramRepo.findById(academicProgramId)
+				.orElseThrow(() -> new AcademicProgramNotFoundByIdException("AcademicProgram With Given Id Not Found"));
+		if (!academicProgram.isDeleted()) {
+			if (academicProgram.isDeleted() == false)
+				academicProgram.setDeleted(true);
+			academicProgramRepo.save(academicProgram);
+			ResponseStructure<String> responseStructure=new ResponseStructure<>();
+			responseStructure.setStatusCode(HttpStatus.OK.value());
+			responseStructure.setMessage("AcademicProgram Deleted Successfully");
+			responseStructure.setData("AcademicProgram With given Id : "+academicProgramId+" is Successfully Deleted");
+
+			return new ResponseEntity<ResponseStructure<String>>(responseStructure, HttpStatus.OK);
+		} else {
+			throw new DataAlreadyDeletedException("AcademicProgram Data Already Deleted ");
+		}
+	}
+	
+	public void deleteAcademicProgramPerminently() {
+
+		List<AcademicProgram> programsToDelete = academicProgramRepo.findByIsDeletedTrue();
+		for (AcademicProgram academicProgram : programsToDelete) {
+			List<ClassHour> classHours = academicProgram.getClassHours();
+			classHourRepo.deleteAllInBatch(classHours);
+		}
+		academicProgramRepo.deleteAllInBatch(programsToDelete);
 	}
 
 }

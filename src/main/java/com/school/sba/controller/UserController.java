@@ -1,5 +1,7 @@
 package com.school.sba.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.school.sba.enums.UserRole;
 import com.school.sba.requestdto.UserRequest;
 import com.school.sba.responsedto.UserResponse;
 import com.school.sba.service.UserService;
@@ -39,7 +42,7 @@ public class UserController {
 	}
 	@DeleteMapping("users/{userId}")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<ResponseStructure<UserResponse>> deleteUserById(@PathVariable int userId){
+	public ResponseEntity<ResponseStructure<String>> deleteUserById(@PathVariable int userId){
 		return userService.deleteUserById(userId);
 	}
 	
@@ -53,5 +56,10 @@ public class UserController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ResponseStructure<UserResponse>> setSubjectToTeacher(@PathVariable int subjectId,@PathVariable int userId){
 		return userService.setSubjectToTeacher(subjectId,userId);
+	}
+	
+	@GetMapping("/academic-programs/{academicProgramId}/user-roles/{userRole}/users")
+	public ResponseEntity<ResponseStructure<List<UserResponse>>> findUsersByRoleByAcademicProgram(@PathVariable int academicProgramId,@PathVariable UserRole userRole){
+		return userService.findUsersByRoleByAcademicProgram(academicProgramId,userRole);
 	}
 }
