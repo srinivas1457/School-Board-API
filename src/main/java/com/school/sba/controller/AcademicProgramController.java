@@ -47,9 +47,9 @@ public class AcademicProgramController {
 	}
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PutMapping("/academic-program/{programId}")
-	public ResponseEntity<ResponseStructure<AcademicProgramResponse>> autoRepeatScheduleON(@PathVariable int programId,@RequestParam("auto-repeat-schedule") boolean autorepeatSchedule){
-		return academicProgramService.autoRepeatScheduleON(programId,autorepeatSchedule);
+	@PutMapping("/academic-programs/{academicProgramId}")
+	public ResponseEntity<ResponseStructure<AcademicProgramResponse>> autoRepeatScheduleON(@PathVariable int academicProgramId,@RequestParam("auto-repeat-schedule") boolean autorepeatSchedule){
+		return academicProgramService.autoRepeatScheduleON(academicProgramId,autorepeatSchedule);
 	}
 
 }
