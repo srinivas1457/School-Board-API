@@ -26,21 +26,14 @@ public class ClassHourController {
 	
 	@PostMapping("/academic-program/{academicProgramId}/class-hours")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<ResponseStructure<String>> addClassHoursToAcademicProgram(@PathVariable int academicProgramId,@RequestBody ClassHourRequest classHourRequest){
-		return classHourService.addClassHoursToAcademicProgram(academicProgramId,classHourRequest);
+	public ResponseEntity<ResponseStructure<String>> addClassHoursToAcademicProgram(@PathVariable int academicProgramId){
+		return classHourService.addClassHoursToAcademicProgram(academicProgramId);
 	}
 	
 	@PutMapping("/class-hours")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ResponseStructure2<List<ClassHourResponse>, List<ErrorResponse>>> updateClassHour(@RequestBody List<ClassHourRequest> classHourRequestList){
 		return classHourService.updateClassHour(classHourRequestList);
-	}
-	
-	@PutMapping("/academic-program/{academicProgramId}/class-hours")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<ResponseStructure<String>> generateNextWeekClassHours(@PathVariable int academicProgramId){
-		return classHourService.generateNextWeekClassHours(academicProgramId);
-		
 	}
 	
 }

@@ -59,5 +59,10 @@ public class ScheduleJobs {
 //	void nextWeek() {
 //		classhourService.generateNextWeekClassHours(1);
 //	}
+	
+	@Scheduled(cron = "0 0 0 ? * MON")
+	public void autoRepeatSchedule() {
+	    classhourService.autoGenerateWeeklyClassHours();
+	}
 
 }

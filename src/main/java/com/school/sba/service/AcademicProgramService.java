@@ -20,4 +20,6 @@ public interface AcademicProgramService {
 	ResponseEntity<ResponseStructure<String>> deleteAcademicProgramById(int academicProgramId);
 
 	void deleteAcademicProgramPerminently();
+
+	ResponseEntity<ResponseStructure<AcademicProgramResponse>> autoRepeatScheduleON(int programId, boolean autorepeatSchedule);
 }

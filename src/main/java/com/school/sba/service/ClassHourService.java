@@ -12,13 +12,11 @@ import com.school.sba.util.ResponseStructure2;
 
 public interface ClassHourService {
 
-	public ResponseEntity<ResponseStructure<String>> addClassHoursToAcademicProgram(int academicProgramId,
-			ClassHourRequest classHourRequest);
+	public ResponseEntity<ResponseStructure<String>> addClassHoursToAcademicProgram(int academicProgramId);
 
 	public ResponseEntity<ResponseStructure2<List<ClassHourResponse>, List<ErrorResponse>>> updateClassHour(List<ClassHourRequest> classHourRequestList);
 
-	public ResponseEntity<ResponseStructure<String>> generateNextWeekClassHours(int academicProgramId);
-	
-//	public void generateNextWeekClassHours(int academicProgramId);
 
+	void autoGenerateWeeklyClassHours();
+	
 }

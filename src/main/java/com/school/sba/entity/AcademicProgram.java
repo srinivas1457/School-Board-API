@@ -48,4 +48,6 @@ public class AcademicProgram {
 	
 	@OneToMany(mappedBy = "academicProgram",fetch = FetchType.EAGER)
 	private List<ClassHour> classHours;
+	
+	private boolean autoRepeatScheduled;
 }

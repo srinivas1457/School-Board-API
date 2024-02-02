@@ -67,8 +67,7 @@ public class ClassHourServiceImpl implements ClassHourService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<String>> addClassHoursToAcademicProgram(int programId,
-			ClassHourRequest request) {
+	public ResponseEntity<ResponseStructure<String>> addClassHoursToAcademicProgram(int programId) {
 		return academicProgramRepo.findById(programId).map(program -> {
 			Schedule schedule = program.getSchool().getSchedule();
 
@@ -140,9 +139,6 @@ public class ClassHourServiceImpl implements ClassHourService {
 		}).orElseThrow(() -> new AcademicProgramNotFoundByIdException("Failed to GENERATE Class Hour"));
 	}
 
-	////// *****************************************************************************
-
-	////////////////////////////////////////////////// ***************************************************//////////////////////////////////////////////
 	@Override
 	public ResponseEntity<ResponseStructure2<List<ClassHourResponse>, List<ErrorResponse>>> updateClassHour(
 			List<ClassHourRequest> classHourRequestList) {
@@ -215,44 +211,28 @@ public class ClassHourServiceImpl implements ClassHourService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<String>> generateNextWeekClassHours(int academicProgramId) {
-		AcademicProgram academicProgram = academicProgramRepo.findById(academicProgramId).orElseThrow(()->new AcademicProgramNotFoundByIdException("Academic Program Not Found By Id"));
-		List<ClassHour> lastWeekClassHours = classHourRepo.findLastNRecordsByAcademicProgram(academicProgram,
-				academicProgram.getSchool().getSchedule().getClassHoursPerday() * 6);
-		List<ClassHour> upComingWeekClassHours=new ArrayList<>();
-		if(!lastWeekClassHours.isEmpty()) {
-//			for (ClassHour existClassHour : lastWeekClassHours) {
-//				ClassHour classHour=mapToNewClassHour(existClassHour);
-//			}
-			for (int i = lastWeekClassHours.size() - 1; i >= 0; i--) {
-			    ClassHour existClassHour = lastWeekClassHours.get(i);
-			    existClassHour = mapToNewClassHour(existClassHour);
-			    // Your logic for each iteration
-			    upComingWeekClassHours.add(existClassHour);
-			}
-			classHourRepo.saveAll(upComingWeekClassHours);
-			
-			structure.setStatusCode(HttpStatus.CREATED.value());
-			structure.setMessage("UpComing Week Classhour GENERATED for Program: " + academicProgram.getProgramName());
-			structure.setData("Auto Repeated Class Hours Successfully");
+	public void autoGenerateWeeklyClassHours() {
+		List<AcademicProgram> programsToAutoRepeat = academicProgramRepo.findByAutoRepeatScheduledTrue();
 
-			return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.CREATED);
-		}else {
-			throw new DataNotPresentException("For Autorepetation Existing ClassHours Data NotPresent");
+		if (!programsToAutoRepeat.isEmpty()) {
+
+			programsToAutoRepeat.forEach(program -> {
+				int recordsNeeded = (program.getSchool().getSchedule().getClassHoursPerday()) * 6;
+				List<ClassHour> classhours = classHourRepo.findLastNRecordsByAcademicProgram(program, recordsNeeded);
+				if(classhours!=null|| !classhours.isEmpty()) {
+				for (int i = classhours.size() - 1; i >= 0; i--) {
+					classHourRepo.save(mapToNewClassHour(classhours.get(i)));
+				}}else
+					throw new DataNotPresentException("For Autorepetation Existing ClassHours Data NotPresent");
+			});
 		}
-		
 	}
 
 	private ClassHour mapToNewClassHour(ClassHour existClassHour) {
-		return ClassHour.builder()
-				.user(existClassHour.getUser())
-				.academicProgram(existClassHour.getAcademicProgram())
-				.roomNo(existClassHour.getRoomNo())
-				.beginsAt(existClassHour.getBeginsAt().plusDays(7))
-				.endsAt(existClassHour.getEndsAt().plusDays(7))
-				.classStatus(existClassHour.getClassStatus())
-				.subject(existClassHour.getSubject())
-				.build();
+		return ClassHour.builder().user(existClassHour.getUser()).academicProgram(existClassHour.getAcademicProgram())
+				.roomNo(existClassHour.getRoomNo()).beginsAt(existClassHour.getBeginsAt().plusDays(7))
+				.endsAt(existClassHour.getEndsAt().plusDays(7)).classStatus(existClassHour.getClassStatus())
+				.subject(existClassHour.getSubject()).build();
 	}
 
 }
