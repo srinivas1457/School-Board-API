@@ -30,7 +30,7 @@ public class SubjectController {
 		return subjectService.insertSubjectsIntoAcademicProgram(subjectRequest,academicProgramId);
 	}
 	
-	@PutMapping("/academic-programs/{academicProgramId}")
+	@PutMapping("/academic-programs/{academicProgramId}/subjects")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ResponseStructure<AcademicProgramResponse>> updateSubjectsToAcademicProgram(@RequestBody SubjectRequest subjectRequest,@PathVariable int academicProgramId){
 		return subjectService.insertSubjectsIntoAcademicProgram(subjectRequest,academicProgramId);

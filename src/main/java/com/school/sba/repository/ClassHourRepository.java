@@ -10,11 +10,7 @@ import com.school.sba.entity.AcademicProgram;
 import com.school.sba.entity.ClassHour;
 import com.school.sba.entity.User;
 
-public interface ClassHourRepository extends JpaRepository<ClassHour, Integer> {
-
-//	List<ClassHour> findByBeginsAt(LocalDateTime beginsAt);
-	
-//	boolean existsByBeginsAtIsLessThanEqualAndEndsAtIsGreaterThanEqualAndRoomNo(LocalDateTime beginsAt, LocalDateTime endsAt,int roomNo);
+public interface ClassHourRepository extends JpaRepository<ClassHour, Integer> {	
 	
 	boolean existsByBeginsAtBetweenAndRoomNo(LocalDateTime beginsAt,LocalDateTime endsAt,int roomNo);
 
@@ -24,6 +20,9 @@ public interface ClassHourRepository extends JpaRepository<ClassHour, Integer> {
 		       "ORDER BY ch.classHourId DESC " +
 		       "LIMIT :lastNrecords")
 	List<ClassHour> findLastNRecordsByAcademicProgram( AcademicProgram academicProgram, int lastNrecords);
+
+
+	List<ClassHour> findAllByAcademicProgramAndBeginsAtBetween(AcademicProgram academicProgram, LocalDateTime from,
+			LocalDateTime to);
 	
-//	boolean existsByBeginsAtBetweenAndAcademicProgramId(LocalDateTime beginsAt,LocalDateTime endsAt,int academicProgramId);
 }
